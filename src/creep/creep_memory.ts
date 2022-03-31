@@ -32,9 +32,9 @@ interface FighterMemory {
     role:   FighterRoleName
 }
 
-//-------------------------------------------REMOTE--------------------------------------------//
+//-------------------------------------------WORKER--------------------------------------------//
 
-type GeneralistRoleName = 'builder'|'maintainer'|'fortifier'|'pioneer'|'upgrader'
+type GeneralistRoleName = 'builder'|'maintainer'|'fortifier'|'pioneer'
 type GeneralistState = 'obtain'|'consume'
 interface GeneralistMemory {
     class:  'generalist'

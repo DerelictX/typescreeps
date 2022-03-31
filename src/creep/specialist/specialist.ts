@@ -58,8 +58,8 @@ const role_performers = {
 
         if(creep.store.getFreeCapacity('energy') > 0)
             return
-            for(let id of task.structs_to){
-                const struct = Game.getObjectById(id);
+        for(let id of task.structs_to){
+            const struct = Game.getObjectById(id);
             if(struct && struct.store && struct.store.getFreeCapacity('energy') > 0){
                 creep.transfer(struct,'energy')
                 break

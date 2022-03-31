@@ -84,7 +84,6 @@ export const default_body_config: {[R in AnyRoleName]:
     pioneer:    {generator:'WCM',   workload:6},
     builder:    {generator:'WCM',   workload:4},
     maintainer: {generator:'WCM',   workload:4},
-    upgrader:   {generator:'WCM',   workload:4},
     fortifier:  {generator:'WCM',   workload:16},
 
     harvester_m:    {generator:'W2M',   workload:9},

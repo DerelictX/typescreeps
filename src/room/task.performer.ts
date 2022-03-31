@@ -11,15 +11,15 @@ export const memory_inspector: {[k in keyof RoomMemory]:
             power_spawn:    null,
             nuker:          null,
             observer:       null,
-            towers:     [],
-            links_in:   [],
-            link_nexus: [],
-            links_out:  [],
+            towers:         [],
+            links_in:       [],
+            link_nexus:     [],
+            links_out:      [],
             containers_in:  [],
             containers_out: [],
-            labs_in:    [],
-            labs_out:   [],
-            wall_hits:  wallHits
+            labs_in:        [],
+            labs_out:       [],
+            wall_hits:      wallHits
         }
     },
     spawn_loop: function(room: Room){
@@ -33,7 +33,6 @@ export const memory_inspector: {[k in keyof RoomMemory]:
             pioneer:    spawn_loop,
             builder:    spawn_loop,
             maintainer: spawn_loop,
-            upgrader:   spawn_loop,
             fortifier:  spawn_loop,
 
             harvester_m:    spawn_loop,
@@ -59,10 +58,10 @@ export const memory_inspector: {[k in keyof RoomMemory]:
         }
     },
     reaction: function(room: Room){
-        
+        room.memory.reaction=[]
     },
     boost: function(room: Room){
-        
+        room.memory.boost=[]
     },
     import_cost: function(room: Room){
         
@@ -132,23 +131,17 @@ export const harvest_updater = {
         if(controller){
             let task: StaticUpgradeTask = {
                 target:         controller.id,
-                energy_structs: [],
-                structs_from:     [],
-                structs_to:    [],
+                structs_from:   [],
+                structs_to:     [],
             }
             const energy_structs: AnyStoreStructure[] = controller.pos.findInRange(FIND_STRUCTURES,3,{
-                filter: (structure) => {
-                    if(structure.structureType == STRUCTURE_CONTAINER
-                            || structure.structureType == STRUCTURE_STORAGE
-                            || structure.structureType == STRUCTURE_TERMINAL
-                            || structure.structureType == STRUCTURE_LINK)
-                        return true
-                    return false
-                }
+                filter: structure => structure.structureType == STRUCTURE_CONTAINER
+                    || structure.structureType == STRUCTURE_STORAGE
+                    || structure.structureType == STRUCTURE_TERMINAL
+                    || structure.structureType == STRUCTURE_LINK
             })
             energy_structs.sort((a, b) => a.store.getCapacity('energy') - b.store.getCapacity('energy'))
             for(let j in energy_structs){
-                task.energy_structs.push(energy_structs[j].id)
                 task.structs_from.push(energy_structs[j].id)
             }
             room.memory.tasks.upgrade.push(task)

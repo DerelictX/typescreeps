@@ -3,9 +3,7 @@ import { body_generator, default_body_config } from "@/creep/body_config";
 export const spawn_run = function(room: Room) {
     if(room.energyAvailable < 300)
         return
-    const spawn = room.find(FIND_MY_SPAWNS,{
-        filter: (spawn) => {return !spawn.spawning}
-    })[0];
+    const spawn = room.find(FIND_MY_SPAWNS).find(spawn => !spawn.spawning)
     if(!spawn)return
 
     let role_name: AnyRoleName
@@ -56,7 +54,6 @@ const init_class_memory = function(role_name: AnyRoleName): AnyClassMemory|undef
         case 'builder':
         case 'maintainer':
         case 'fortifier':
-        case 'upgrader':
         case 'pioneer':
             return {
                 class:  'generalist',
@@ -81,5 +78,5 @@ const init_class_memory = function(role_name: AnyRoleName): AnyClassMemory|undef
             }
         default:
             return undefined
-        }
+    }
 }

@@ -30,25 +30,17 @@ interface RoomStructureList {
     nuker:          null|Id<StructureNuker>
     observer:       null|Id<StructureObserver>
 
-    towers:     Id<StructureTower>[]
+    towers:         Id<StructureTower>[]
     
-    links_in:   Id<StructureLink>[]
-    link_nexus: Id<StructureLink>[]
-    links_out:  Id<StructureLink>[]
+    links_in:       Id<StructureLink>[]
+    link_nexus:     Id<StructureLink>[]
+    links_out:      Id<StructureLink>[]
 
     containers_in:  Id<StructureContainer>[]
     containers_out: Id<StructureContainer>[]
 
-    labs_in:    Id<StructureLab>[]
-    labs_out:   Id<StructureLab>[]
+    labs_in:        Id<StructureLab>[]
+    labs_out:       Id<StructureLab>[]
     
-    wall_hits:  number
-}
-
-interface SpawnQueue {
-    //spawn_queue: AnyRoleName[]
-    specialist: SpecialistRoleName[]
-    generalist: GeneralistRoleName[]
-    carrier:    CarrierRoleName[]
-    fighter:    FighterRoleName[]
+    wall_hits:      number
 }

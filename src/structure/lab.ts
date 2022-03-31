@@ -1,12 +1,3 @@
-/*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports.thing = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('lab');
- * mod.thing == 'a thing'; // true
- */
-
 import _ from "lodash";
 
 export const lab_run = function(room: Room){
