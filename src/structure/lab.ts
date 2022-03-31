@@ -32,10 +32,10 @@ export const change_reaction = function(room:Room){
         return
     room.memory.reaction = []
     
-    for(let tier = 3; tier >= 0; tier--){
+    for(let tier = 1; tier >= 0; tier--){
         const reacts = compound_tier[tier]
         for(let i in reacts){
-            if(storage.store[reacts[i]] > 10000)
+            if(storage.store[reacts[i]] > 12000)
                 continue
             const reactants = reactions[reacts[i]] 
             if(terminal.store[reactants[0]] >= 1000 && terminal.store[reactants[1]] >= 1000){

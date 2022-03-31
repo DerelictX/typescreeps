@@ -40,7 +40,6 @@ const obtain: {[role in GeneralistRoleName]:ObtainPriority} = {
     maintainer: ['withdraw_energy'],
     fortifier:  ['unstore_energy'],
     pioneer:    ['loot_energy','withdraw_energy'],
-    upgrader:   ['withdraw_energy'],
 }
 
 type ConsumePriority = {[i:number]:keyof typeof consume_finders}
@@ -58,7 +57,6 @@ const consume: {[role in GeneralistRoleName]:ConsumePriority} = {
         'repair_damaged','build',
         'fortify','over_fortify'
     ],
-    upgrader:   ['upgrade_autarky'],
     pioneer: [
         'fill_extensions','repair_damaged','build',
         'upgrade_autarky','fortify','over_fortify'

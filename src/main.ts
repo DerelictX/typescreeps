@@ -97,7 +97,7 @@ export const loop = function () {
     
     try{
         death_detect()
-        //terminal_run()
+        terminal_run()
         //Game.cpu.generatePixel();
     }catch(error){
         console.log(':' + error);
