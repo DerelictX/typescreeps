@@ -102,7 +102,7 @@ export const task_performers = {
 
     },
 
-    transfer(creep: Creep, params:TransferTask):TaskReturnCode {
+    transfer(creep: Creep, params:TransferEnergyTask):TaskReturnCode {
         let target = Game.getObjectById(params.target)
         if(!target){
             creep.say('ERR:' + ERR_NOT_FOUND)
@@ -131,7 +131,7 @@ export const task_performers = {
 
     },
 
-    withdraw(creep: Creep, params:WithdrawTask):TaskReturnCode {
+    withdraw(creep: Creep, params:WithdrawEnergyTask):TaskReturnCode {
         let target = Game.getObjectById(params.target)
         if(!target){
             creep.say('ERR:' + ERR_NOT_FOUND)

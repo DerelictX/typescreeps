@@ -71,7 +71,7 @@ export const loop = function () {
             }
             const cpv = Game.cpu.getUsed() - cpu
             if(cpv > 1){
-                //console.log(name + ':' + cpv);
+                //console.log(creep.memory.class_memory.role + ':\t' + cpv);
             }
                 
         }catch(error){

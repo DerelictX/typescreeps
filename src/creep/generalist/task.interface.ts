@@ -12,10 +12,10 @@ type ACTION_WITHDRAW = "withdraw"
 type ACTION_TRANSFER = "transfer"
 
 type ObtainTask =
-    HarvestTask | WithdrawTask
+    HarvestTask | WithdrawEnergyTask
 
 type ConsumeTask = 
-    UpgradeTask | TransferTask
+    UpgradeTask | TransferEnergyTask
     | BuildTask | RepairTask
 
 interface HarvestTask{
@@ -38,12 +38,12 @@ interface RepairTask{
     target: Id<Structure>
 }
 
-interface WithdrawTask{
+interface WithdrawEnergyTask{
     action: ACTION_WITHDRAW
     target: Id<AnyStoreStructure|Tombstone|Ruin>
 }
 
-interface TransferTask{
+interface TransferEnergyTask{
     action: ACTION_TRANSFER
     target: Id<AnyCreep|AnyStoreStructure>
 }

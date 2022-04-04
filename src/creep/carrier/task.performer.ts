@@ -36,13 +36,19 @@ export const _supply = function(creep:Creep, params:TransportTask):TaskReturnCod
         creep.say('ERR:' + ERR_NOT_FOUND)
         return 'error'
     }
-    if(creep.store[params.resourceType] < params.amount){
+    if(creep.store[params.resourceType] == 0){
         creep.say('ERR:' + ERR_NOT_ENOUGH_RESOURCES)
         return 'error'
     }
     const free = target.store.getFreeCapacity(params.resourceType)
-    if(!free || free < params.amount){
+    if(!free || free == 0){
         creep.say('ERR:' + ERR_FULL)
+        return 'error'
+    }
+    params.amount = Math.min(params.amount,
+        creep.store[params.resourceType],free)
+    if(params.amount <= 0){
+        creep.say('ERR:' + ERR_INVALID_ARGS)
         return 'error'
     }
 

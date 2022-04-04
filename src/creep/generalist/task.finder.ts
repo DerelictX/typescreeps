@@ -66,7 +66,7 @@ const consume: {[role in GeneralistRoleName]:ConsumePriority} = {
 
 
 const obtain_finders = {
-    withdraw_energy: function(creep: Creep): WithdrawTask|null{
+    withdraw_energy: function(creep: Creep): WithdrawEnergyTask|null{
         let target: AnyStoreStructure|null = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 if(structure.structureType == STRUCTURE_CONTAINER)
@@ -94,7 +94,7 @@ const obtain_finders = {
         return null
     },
 
-    unstore_energy: function(creep: Creep): WithdrawTask|null{
+    unstore_energy: function(creep: Creep): WithdrawEnergyTask|null{
         let target:StructureStorage|StructureTerminal|undefined = creep.room.storage
         if(target && target.store['energy'] > 200000){
             return {action:"withdraw", target:target.id}
@@ -106,7 +106,7 @@ const obtain_finders = {
         return null
     },
 
-    loot_energy: function(creep: Creep): WithdrawTask|null{
+    loot_energy: function(creep: Creep): WithdrawEnergyTask|null{
         let target: AnyOwnedStructure&AnyStoreStructure|null = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, {
             filter: (structure) => {
                 if(structure.structureType == STRUCTURE_SPAWN
@@ -132,7 +132,7 @@ const consume_finders = {
         return null
     },
     
-    fill_extensions :function(creep:Creep): TransferTask|null {
+    fill_extensions :function(creep:Creep): TransferEnergyTask|null {
         let target: AnyOwnedStructure&AnyStoreStructure|null = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
             filter: (structure) => {
                 if(structure.structureType == STRUCTURE_SPAWN

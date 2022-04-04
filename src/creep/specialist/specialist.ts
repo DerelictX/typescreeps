@@ -29,7 +29,8 @@ const role_performers = {
             creep.moveTo(container)
         if(container.hits <= 225000)
             creep.repair(container)
-        if(container.store.getFreeCapacity('energy') > 0)
+        if(creep.store.getFreeCapacity('energy') > 0
+            || container.store.getFreeCapacity('energy') > 0)
             creep.harvest(source)
 
         if(creep.store.getFreeCapacity('energy') > 0)
@@ -53,7 +54,8 @@ const role_performers = {
             creep.moveTo(container)
         if(container.hits <= 225000)
             creep.repair(container)
-        if(container.store.getFreeCapacity('energy') > 0)
+        if(creep.store.getFreeCapacity('energy') > 0
+            || container.store.getFreeCapacity('energy') > 0)
             creep.harvest(source)
 
         if(creep.store.getFreeCapacity('energy') > 0)

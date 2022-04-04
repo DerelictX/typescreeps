@@ -11,4 +11,3 @@ export const carrier_run = function(creep: Creep){
     }
 
 }
-

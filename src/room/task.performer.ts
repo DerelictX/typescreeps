@@ -140,6 +140,7 @@ export const harvest_updater = {
                     || structure.structureType == STRUCTURE_TERMINAL
                     || structure.structureType == STRUCTURE_LINK
             })
+            if(!energy_structs[0]) return
             energy_structs.sort((a, b) => a.store.getCapacity('energy') - b.store.getCapacity('energy'))
             for(let j in energy_structs){
                 task.structs_from.push(energy_structs[j].id)

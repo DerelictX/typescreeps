@@ -62,7 +62,7 @@ export const structure_updater = {
         room.memory.structures.containers_out = []
         const controller = room.controller;
         if(controller){
-            let containers:StructureContainer[] = controller.pos.findInRange(FIND_STRUCTURES,2,{
+            let containers:StructureContainer[] = controller.pos.findInRange(FIND_STRUCTURES,3,{
                 filter: {structureType: STRUCTURE_CONTAINER}
             });
             for(let i in containers){
@@ -87,7 +87,7 @@ export const structure_updater = {
         let storage: StructureStorage|StructureTerminal|undefined = room.storage;
         if(!storage) storage = room.terminal;
         if(storage){
-            let links:StructureLink[] = storage.pos.findInRange(FIND_MY_STRUCTURES,2,{
+            let links:StructureLink[] = storage.pos.findInRange(FIND_MY_STRUCTURES,3,{
                 filter: {structureType: STRUCTURE_LINK}
             });
             for(let i in links){

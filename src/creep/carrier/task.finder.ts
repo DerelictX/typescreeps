@@ -19,22 +19,19 @@ export const find_transport = function(creep:Creep) {
 export const find_store = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'carrier')
         return
-    const storage:(AnyStoreStructure&AnyOwnedStructure)[] = creep.room.find(FIND_MY_STRUCTURES, {
-        filter: (structure) => {
-            if(structure.structureType == STRUCTURE_STORAGE
-                || structure.structureType == STRUCTURE_TERMINAL)
-                return structure.store.getFreeCapacity() >= 20000
-            return false
-        }
-    })
-    if(!storage[0])return null
+    var storage:(AnyStoreStructure&AnyOwnedStructure)|undefined
+    storage = creep.room.storage
+    if(!storage || !storage.my || storage.store.getFreeCapacity() < 100000)
+        storage = creep.room.terminal
+    if(!storage || !storage.my || storage.store.getFreeCapacity() < 100000)
+        return null
     
     var store: StorePropertiesOnly = creep.store
     var resourceType: keyof typeof store
     for(resourceType in store){
         creep.memory.class_memory.supply.push({
-            source:         storage[0].id,
-            target:         storage[0].id,
+            source:         storage.id,
+            target:         storage.id,
             resourceType:   resourceType,
             amount:         creep.store[resourceType]
         })
@@ -58,7 +55,7 @@ const transport_finders = {
         if(storage.store['energy'] > storage.store.getCapacity() * 0.4)
             return null
 
-        const link_nexus:StructureLink|null = Game.getObjectById(creep.room.memory.structures.link_nexus[0])
+        const link_nexus = Game.getObjectById(creep.room.memory.structures.link_nexus[0])
         if(link_nexus && link_nexus.store['energy'] >= 300){
             return {
                 source:         link_nexus.id,
@@ -70,15 +67,12 @@ const transport_finders = {
             }
         }
 
-        const containers:(AnyStoreStructure[]) = creep.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER
-                    && structure.store.getUsedCapacity() >= 1200)
-            }
-        })
-        
-        for(let i in containers){
-            const container = containers[i]
+        const containers = creep.room.memory.structures.containers_in
+                .map(id => Game.getObjectById(id))
+                .filter(c => c && c.store.getUsedCapacity() >= 1200)
+
+        for(let container of containers){
+            if(!container) continue
             var store: StorePropertiesOnly = container.store
             var resourceType: keyof typeof store
             for(resourceType in store){
@@ -485,7 +479,7 @@ const transport_finders = {
         if(!storage || !terminal)
             return null
 
-        if(storage.my && storage.store.getFreeCapacity() > 100000){            
+        if(storage.my && storage.store.getFreeCapacity() > 100000){
             //termintal => storage
             var terminal_store: StorePropertiesOnly = terminal.store
             var resourceType: keyof typeof terminal_store
