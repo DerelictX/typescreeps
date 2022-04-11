@@ -27,6 +27,7 @@ export const memory_inspector: {[k in keyof RoomMemory]:
             succeed_time:   Game.time+100,
             succ_interval:  1500,
             body_parts:     [],
+            boost_queue:    [],
             queued:         0
         }
         room.memory.spawn_loop={

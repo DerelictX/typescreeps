@@ -1,3 +1,5 @@
+import { gofor_boost } from "../fighter/fighter"
+
 export const specialist_run = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'specialist')
         return
@@ -70,25 +72,43 @@ const role_performers = {
     },
 
     upgrader_s(creep:Creep) {
-        const controller = creep.room.controller
+        if(creep.memory.boost_queue.length){
+            gofor_boost(creep)
+            return
+        }
+
+        const task:StaticUpgradeTask = creep.room.memory.tasks.upgrade[0]
+        if(!task) return
+        const controller = Game.getObjectById(task.target)
         if(!controller || !controller.my)
             return
         
         if(!creep.pos.inRangeTo(controller,3))
             creep.moveTo(controller)
 
-        let link:StructureLink|null = Game.getObjectById(creep.room.memory.structures.links_out[0])
-        if(link && link.pos.inRangeTo(controller,2)){
-            if(!creep.pos.isNearTo(link))
-                creep.moveTo(link)
-            if(creep.store['energy'] <= 10)    
-                creep.withdraw(link,'energy')
+        if(creep.store['energy'] <= 10){
+            const struct = task.structs_from.map(id => Game.getObjectById(id))
+                .find(s => s && s.store['energy'] > 0)
+            if(struct){
+                if(creep.withdraw(struct,'energy') == ERR_NOT_IN_RANGE)
+                    creep.moveTo(struct)
+            }
         }
     
         creep.upgradeController(controller);
     },
 
     reserver(creep:Creep){
-        creep.moveTo(Game.flags.claim,{reusePath:100})
+        const flag = Game.flags.claim
+        if(!flag) return
+        if(creep.pos.isEqualTo(flag)){
+            const controller = creep.room.controller
+            if(!controller) return
+            if(controller.owner)
+                creep.attackController(controller)
+            else creep.reserveController(controller)
+        } else {
+            creep.moveTo(Game.flags.claim,{reusePath:100})
+        }
     }
 }

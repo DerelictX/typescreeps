@@ -23,14 +23,15 @@ export const spawn_run = function(room: Room) {
             if(ret == OK){
                 room.memory.spawn_loop[role_name].queued = 0
                 room.memory.spawn_loop[role_name].succeed_time = Game.time
-                    + spawn_loop.succ_interval + body_parts.length * 3
+                    + spawn_loop.succ_interval + 10
                     
                 const class_memory = init_class_memory(role_name)
                 if(class_memory) Memory.creeps[creep_name] = {
                     class_memory:   class_memory,
                     spawn_room:     room.name,
                     resource_room:  room.name,
-                    target_room:    room.name
+                    target_room:    room.name,
+                    boost_queue:    []
                 }
                 return
             } else {
@@ -71,6 +72,7 @@ const init_class_memory = function(role_name: AnyRoleName): AnyClassMemory|undef
                 supply:     []
             }
         case 'healer':
+        case 'ranged':
         case 'melee':
             return {
                 class:  'fighter',

@@ -32,10 +32,12 @@ export const change_reaction = function(room:Room){
         return
     room.memory.reaction = []
     
-    for(let tier = 1; tier >= 0; tier--){
+    for(let tier = 3; tier >= 0; tier--){
         const reacts = compound_tier[tier]
         for(let i in reacts){
-            if(storage.store[reacts[i]] > 12000)
+            if(tier < 3 && storage.store[reacts[i]] > 12000)
+                continue
+            if(storage.store[reacts[i]] > 24000)
                 continue
             const reactants = reactions[reacts[i]] 
             if(terminal.store[reactants[0]] >= 1000 && terminal.store[reactants[1]] >= 1000){
@@ -49,16 +51,22 @@ _.assign(global, {change_reaction:change_reaction})
 
 const compound_tier:MineralCompoundConstant[][]  = [
     [
-        'OH','ZK','UL','G'
+        'OH','G','ZK','UL'
     ],[
-        'LH','UH','ZH','KH','GH',
-        'LO','UO','ZO','KO','GO'
+        'ZO','GO','LO',
+        'KO','UH',
+        'LH','ZH','GH',
+        'KH','UO'
     ],[
-        'LH2O','UH2O','ZH2O','KH2O','GH2O',
-        'LHO2','UHO2','ZHO2','KHO2','GHO2'
+        'ZHO2','GHO2','LHO2',
+        'KHO2','UH2O',
+        'LH2O','ZH2O','GH2O',
+        //'KH2O','UHO2'
     ],[
-        'XLH2O','XUH2O','XZH2O','XKH2O','XGH2O',
-        'XLHO2','XUHO2','XZHO2','XKHO2','XGHO2'
+        'XZHO2','XGHO2','XLHO2',
+        'XKHO2','XUH2O',
+        'XLH2O','XZH2O','XGH2O',
+        'XKH2O','XUHO2'
     ]
 ]
 

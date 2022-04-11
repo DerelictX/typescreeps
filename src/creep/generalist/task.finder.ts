@@ -50,7 +50,7 @@ const consume: {[role in GeneralistRoleName]:ConsumePriority} = {
         'fortify','upgrade_autarky','over_fortify'
     ],
     maintainer: [
-        'repair_damaged','repair_decayed',
+        'repair_damaged','fill_extensions','repair_decayed',
         'fortify','upgrade_autarky','over_fortify'
     ],
     fortifier:  [
@@ -133,6 +133,8 @@ const consume_finders = {
     },
     
     fill_extensions :function(creep:Creep): TransferEnergyTask|null {
+        if(creep.room.energyAvailable == creep.room.energyCapacityAvailable)
+            return null
         let target: AnyOwnedStructure&AnyStoreStructure|null = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
             filter: (structure) => {
                 if(structure.structureType == STRUCTURE_SPAWN

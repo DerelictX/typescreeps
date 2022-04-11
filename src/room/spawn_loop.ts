@@ -67,7 +67,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     upgrader_s: function(room:Room){
         harvest_updater.upgrade(room)
         room.memory.spawn_loop['upgrader_s'].succ_interval = 1500
-        if(room.storage && room.storage.my && room.storage.store['energy'] < 270000)
+        if(room.storage && room.storage.my && room.storage.store['energy'] < 240000)
             return false
         if(room.memory.tasks.upgrade[0])
             return true
@@ -80,7 +80,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     },
     fortifier: function(room:Room){
         room.memory.spawn_loop['upgrader_s'].succ_interval = 1500
-        if(room.storage && room.storage.store['energy'] > 300000)
+        if(room.storage && room.storage.store['energy'] > 270000)
             return true
         return false
     },
@@ -90,7 +90,11 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     ranged: (room:Room) => false,
     emergency: (room:Room) => false,
     pioneer: (room:Room) => false,
-    reserver: (room:Room) => false,
+    reserver: function(room:Room){
+        room.memory.spawn_loop['reserver'].succ_interval = 1100
+        if(room.name == 'E33S57') return true
+        return false
+    },
 }
 
 
@@ -107,11 +111,13 @@ export const spawn_loop = function(room: Room) {
 
         if(spawn_handler[role_name](room))
             room.memory.spawn_loop[role_name].queued = 1
+            
         if(room.memory.spawn_loop[role_name].body_parts.length == 0){
             const generator = body_generator[default_body_config[role_name].generator]
             let workload = default_body_config[role_name].workload
             room.memory.spawn_loop[role_name].body_parts = generator(
                 room.energyAvailable,workload)
         }
+        room.memory.spawn_loop[role_name].boost_queue = []
     }
 }

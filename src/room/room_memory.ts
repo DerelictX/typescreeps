@@ -15,6 +15,9 @@ interface RoleSpawnLoop {
     succeed_time:   number,
     succ_interval:  number,
     body_parts:     BodyPartConstant[]
+    boost_queue:    {
+        part:BodyPartConstant
+        boost:MineralBoostConstant}[]
     queued:         number
 }
 

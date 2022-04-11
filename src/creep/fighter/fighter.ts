@@ -12,39 +12,35 @@ const squad_runner = function(squad: Creep[]){
 
 const role_performers = {
     healer(creep:Creep){
-        
-        const target = creep.pos.findClosestByRange(FIND_MY_CREEPS, {
-            filter: function(object) {
-                return object.name != creep.name
-            }
-        });
-        if(target) {
-            creep.moveTo(target);
-            if(target.hits < target.hitsMax) {
-                creep.heal(target);
-            }
-            else creep.heal(creep)
+        if(creep.memory.boost_queue.length){
+            gofor_boost(creep)
+            return
         }
-        else {
-            creep.heal(creep)
-            creep.moveTo(Game.flags['he'])
-        }
+        creep.heal(creep)
+        if(Game.flags['he'])
+            creep.moveTo(Game.flags['he'],{reusePath:50})
+        creep.rangedMassAttack()
     },
     ranged(creep:Creep){
 
     },
     melee(creep:Creep){
 
-//        creep.moveTo(Game.flags['at'],{reusePath:100})
-        if(Game.flags['at'].room){
-            const found = Game.flags.at.pos.lookFor(LOOK_STRUCTURES);
-            if(found.length && found[0]) {
-                if(creep.pos.isNearTo(found[0]))
-                    creep.attack(found[0])
-                else creep.moveTo(found[0])
-                return
-            }
-        }
-        
     },
+}
+
+export const gofor_boost = function(creep:Creep){
+    const boostType = creep.memory.boost_queue[0].boost
+    const partType = creep.memory.boost_queue[0].part
+    const lab:StructureLab[] = creep.room.find(FIND_MY_STRUCTURES,{
+        filter: lab => lab.structureType == STRUCTURE_LAB
+            && lab.store[boostType] >= creep.getActiveBodyparts(partType) * 30
+    })
+    if(!lab[0]){
+        creep.memory.boost_queue.shift()
+    } else {
+        const ret = lab[0].boostCreep(creep)
+        if(ret == ERR_NOT_IN_RANGE) creep.moveTo(lab[0])
+        else creep.memory.boost_queue.shift()
+    }
 }

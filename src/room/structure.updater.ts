@@ -85,9 +85,9 @@ export const structure_updater = {
 
         room.memory.structures.link_nexus = []
         let storage: StructureStorage|StructureTerminal|undefined = room.storage;
-        if(!storage) storage = room.terminal;
+        if(!storage || !storage.my) storage = room.terminal;
         if(storage){
-            let links:StructureLink[] = storage.pos.findInRange(FIND_MY_STRUCTURES,3,{
+            let links:StructureLink[] = storage.pos.findInRange(FIND_MY_STRUCTURES,2,{
                 filter: {structureType: STRUCTURE_LINK}
             });
             for(let i in links){
@@ -101,7 +101,7 @@ export const structure_updater = {
             let link:StructureLink|null = controller.pos.findClosestByRange(FIND_MY_STRUCTURES,{
                 filter: {structureType: STRUCTURE_LINK}
             });
-            if(link && link.pos.inRangeTo(controller,2))
+            if(link && link.pos.inRangeTo(controller,3))
                 room.memory.structures.links_out.push(link.id)
         }
 
@@ -123,7 +123,7 @@ export const structure_updater = {
         }
     
         for(let i in labs){
-            if(near_num[i] == labs.length && room.memory.structures.labs_in.length < 2)
+            if(labs.length >= 6 && near_num[i] == labs.length && room.memory.structures.labs_in.length < 2)
                 room.memory.structures.labs_in.push(labs[i].id)
             else room.memory.structures.labs_out.push(labs[i].id)
         }

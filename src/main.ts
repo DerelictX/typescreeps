@@ -75,7 +75,7 @@ export const loop = function () {
             }
                 
         }catch(error){
-            console.log(name + ':' + error);
+            console.log(name + ':' + error + '');
         }
     }
 

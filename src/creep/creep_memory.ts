@@ -5,6 +5,9 @@ interface CreepMemory {
     spawn_room:     string
     resource_room:  string
     target_room:    string
+    boost_queue:    {
+        part:BodyPartConstant
+        boost:MineralBoostConstant}[]
 }
 
 type AnyRoleName = GeneralistRoleName|SpecialistRoleName|CarrierRoleName|FighterRoleName

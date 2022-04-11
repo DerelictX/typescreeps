@@ -47,10 +47,8 @@ export const body_generator:{[c in body_generator_name]:
         const xx = Math.min(energy_cost/150,50/3,workload)
         if(xx < 1) return []
         let ret:BodyPartConstant[] = []
-        for(let i = 1; i <= xx; i++){
+        for(let i = 1; i <= 2 * xx; i++)
             ret.push(CARRY)
-            ret.push(CARRY)
-        }
         for(let i = 1; i <= xx; i++)
             ret.push(MOVE)
         return ret
@@ -59,15 +57,23 @@ export const body_generator:{[c in body_generator_name]:
         const xx = Math.min(energy_cost/650,50/2,workload)
         if(xx < 1) return []
         let ret:BodyPartConstant[] = []
-        for(let i = 1; i <= xx; i++){
+        for(let i = 1; i <= xx; i++)
             ret.push(CLAIM)
-        }
         for(let i = 1; i <= xx; i++)
             ret.push(MOVE)
         return ret
     },
     TH2:function(energy_cost:number,workload:number){
-        return []
+        let ret:BodyPartConstant[] = []
+        for(let i = 1; i <= workload; i++)
+            ret.push(TOUGH)
+        for(let i = 1; i <= 40 - 3 * workload; i++)
+            ret.push(RANGED_ATTACK)
+        for(let i = 1; i <= 2 * workload; i++)
+            ret.push(HEAL)
+        for(let i = 1; i <= 10; i++)
+            ret.push(MOVE)
+        return ret
     },
     TA3:function(energy_cost:number,workload:number){
         return []
