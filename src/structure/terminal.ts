@@ -1,16 +1,12 @@
 import _ from "lodash";
 
-export const owned_rooms = [
-    'E32S56','E33S57','E31S54','E41S56',
-    'E35S52','E44S49','E39S55','E39S58']
-
 export const terminal_run = function(){
     if(Game.time % 23 != 0)
         return
 
     var terminals: StructureTerminal[] = []
-    for(let i in owned_rooms){
-        const room = Game.rooms[owned_rooms[i]]
+    for(let room_name of Memory.owned_rooms){
+        const room = Game.rooms[room_name]
         if(room.terminal && room.terminal.my){
             terminals.push(room.terminal)
         }

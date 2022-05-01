@@ -6,6 +6,9 @@ import { harvest_updater } from "./task.performer"
 const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     harvester_m: function(room:Room){
         harvest_updater.mineral(room)
+        const generator = body_generator.W2cM
+        room.memory.spawn_loop['harvester_m'].body_parts = generator(
+            room.energyAvailable,7)
         if(room.memory.tasks.harvest_m[0])
             return true
         return false
@@ -15,7 +18,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         if(!room.memory.tasks.harvest[0])
             return false
 
-        const generator = body_generator[default_body_config['harvester_s0'].generator]
+        const generator = body_generator.W2cM
         let workload = 3
         if(room.controller && room.controller.level == 8)
             workload = 5
@@ -28,7 +31,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         if(!room.memory.tasks.harvest[1])
             return false
 
-        const generator = body_generator[default_body_config['harvester_s1'].generator]
+        const generator = body_generator.W2cM
         let workload = 3
         if(room.controller && room.controller.level == 8)
             workload = 5
@@ -39,16 +42,19 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
 
     maintainer: function(room:Room){
         structure_updater.towers(room)
+        const generator = body_generator.WCM
+        let workload = 4
+        room.memory.spawn_loop['maintainer'].body_parts = generator(
+            room.energyAvailable,workload)
         return true
     },
     supplier: function(room:Room){
         structure_updater.labs(room)
         change_reaction(room)
 
-        const generator = body_generator[default_body_config['supplier'].generator]
         let workload = room.controller?.level
         if(!workload) return false
-        room.memory.spawn_loop['supplier'].body_parts = generator(
+        room.memory.spawn_loop['supplier'].body_parts = body_generator.C2M(
             room.energyAvailable,workload)
         return true
     },
@@ -56,17 +62,20 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         structure_updater.containers(room)
         structure_updater.links(room)
 
-        const generator = body_generator[default_body_config['collector'].generator]
         let workload = room.controller?.level
         if(!workload) return false
-        room.memory.spawn_loop['collector'].body_parts = generator(
+        room.memory.spawn_loop['collector'].body_parts = body_generator.C2M(
             room.energyAvailable,workload)
         return true
     },
 
     upgrader_s: function(room:Room){
         harvest_updater.upgrade(room)
-        room.memory.spawn_loop['upgrader_s'].succ_interval = 1500
+        const generator = body_generator.W2cM
+        let workload = 5
+        room.memory.spawn_loop['upgrader_s'].body_parts = generator(
+            room.energyAvailable,workload)
+            
         if(room.storage && room.storage.my && room.storage.store['energy'] < 240000)
             return false
         if(room.memory.tasks.upgrade[0])
@@ -74,12 +83,20 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         return false
     },
     builder: function(room:Room){
+        const generator = body_generator.WCM
+        let workload = 4
+        room.memory.spawn_loop['builder'].body_parts = generator(
+            room.energyAvailable,workload)
         if(room.find(FIND_MY_CONSTRUCTION_SITES)[0])
             return true
         return false
     },
     fortifier: function(room:Room){
-        room.memory.spawn_loop['upgrader_s'].succ_interval = 1500
+        room.memory.spawn_loop['fortifier'].succ_interval = 1500
+        const generator = body_generator.WCM
+        let workload = 16
+        room.memory.spawn_loop['fortifier'].body_parts = generator(
+            room.energyAvailable,workload)
         if(room.storage && room.storage.store['energy'] > 270000)
             return true
         return false
@@ -91,6 +108,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     emergency: (room:Room) => false,
     pioneer: (room:Room) => false,
     reserver: function(room:Room){
+        return false
         room.memory.spawn_loop['reserver'].succ_interval = 1100
         if(room.name == 'E33S57') return true
         return false

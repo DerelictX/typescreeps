@@ -1,9 +1,14 @@
+import { gofor_boost } from "../fighter/fighter"
 import { find_consume, find_obtain } from "./task.finder"
 import { task_performers } from "./task.performer"
 
 export const generalist_run = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'generalist')
         return
+    if(creep.memory.boost_queue.length){
+        gofor_boost(creep)
+        return
+    }
     
     if(creep.memory.class_memory.state == 'obtain'){
         perform_obtain(creep)

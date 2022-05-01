@@ -19,11 +19,13 @@ export const find_transport = function(creep:Creep) {
 export const find_store = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'carrier')
         return
-    var storage:(AnyStoreStructure&AnyOwnedStructure)|undefined
+    var storage:AnyStoreStructure|undefined|null
     storage = creep.room.storage
     if(!storage || !storage.my || storage.store.getFreeCapacity() < 100000)
         storage = creep.room.terminal
     if(!storage || !storage.my || storage.store.getFreeCapacity() < 100000)
+        storage = Game.getObjectById(creep.room.memory.structures.containers_out[0])
+    if(!storage || storage.store.getFreeCapacity() < 400)
         return null
     
     var store: StorePropertiesOnly = creep.store
@@ -40,12 +42,39 @@ export const find_store = function(creep:Creep) {
 
 type TransportPriority = {[i:number]:keyof typeof transport_finders}
 const transport: {[role in CarrierRoleName]:TransportPriority} = {
-    collector:  ['containers','sweep','compound','loot','terminal'],
-    supplier:   ['extensions','towers','boost','reactant','power_spawn'],
+    collector:  ['containers','sweep','compound','loot','terminal','supply_upgrade'],
+    supplier:   ['extensions','towers','boost','reactant','power_spawn','supply_upgrade'],
     emergency:  ['extensions','containers']
 }
 
 const transport_finders = {
+    supply_upgrade: function(creep:Creep):TransportTask|null {
+        const storage = Game.getObjectById(creep.room.memory.structures.containers_out[0])
+        if(!storage || storage.store.getFreeCapacity() < 800)
+            return null
+
+        const containers = creep.room.memory.structures.containers_in
+                .map(id => Game.getObjectById(id))
+                .filter(c => c && c.store.getUsedCapacity() >= 1200)
+
+        for(let container of containers){
+            if(!container) continue
+            var store: StorePropertiesOnly = container.store
+            var resourceType: keyof typeof store
+            for(resourceType in store){
+                return {
+                    source:         container.id,
+                    target:         storage.id,
+                    resourceType:   resourceType,
+                    amount:         Math.min(
+                        creep.store.getFreeCapacity(),
+                        container.store[resourceType])
+                }
+            }
+        }
+
+        return null
+    },
     
     containers: function(creep:Creep):TransportTask|null {
         var storage:(AnyStoreStructure&AnyOwnedStructure)|undefined

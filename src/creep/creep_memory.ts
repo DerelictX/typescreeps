@@ -8,6 +8,13 @@ interface CreepMemory {
     boost_queue:    {
         part:BodyPartConstant
         boost:MineralBoostConstant}[]
+    
+    _move?:{
+        dest: {x:number,y:number,room:string},
+        time: number,
+        path: string,
+        room: string
+    }
 }
 
 type AnyRoleName = GeneralistRoleName|SpecialistRoleName|CarrierRoleName|FighterRoleName

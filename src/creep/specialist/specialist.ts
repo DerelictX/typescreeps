@@ -104,7 +104,7 @@ const role_performers = {
         if(creep.pos.isEqualTo(flag)){
             const controller = creep.room.controller
             if(!controller) return
-            if(controller.owner)
+            if(controller.owner && !controller.my)
                 creep.attackController(controller)
             else creep.reserveController(controller)
         } else {

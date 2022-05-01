@@ -109,7 +109,9 @@ const obtain_finders = {
     loot_energy: function(creep: Creep): WithdrawEnergyTask|null{
         let target: AnyOwnedStructure&AnyStoreStructure|null = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, {
             filter: (structure) => {
-                if(structure.structureType == STRUCTURE_SPAWN
+                if(structure.structureType == STRUCTURE_STORAGE
+                    || structure.structureType == STRUCTURE_TERMINAL
+                    || structure.structureType == STRUCTURE_SPAWN
                     || structure.structureType == STRUCTURE_EXTENSION
                     || structure.structureType == STRUCTURE_TOWER
                     || structure.structureType == STRUCTURE_LAB

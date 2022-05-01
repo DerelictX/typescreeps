@@ -10,7 +10,7 @@ import { fighter_run } from "./creep/fighter/fighter";
 import { power_spawn_run } from "./structure/power_spawn";
 import { structure_updater } from "./room/structure.updater";
 import { operator_run } from "./power_creep/operator";
-import { owned_rooms, terminal_run } from "./structure/terminal";
+import { terminal_run } from "./structure/terminal";
 import { spawn_loop } from "./room/spawn_loop";
 import { body_generator } from "./creep/body_config";
 import { memory_inspector } from "./room/task.performer";
@@ -22,9 +22,9 @@ export const loop = function () {
         structure_updater
         body_generator
     }
-
-    for(let i in owned_rooms){
-        const room = Game.rooms[owned_rooms[i]];
+    
+    for(let room_name of Memory.owned_rooms){
+        const room = Game.rooms[room_name];
         if(!room)continue
         try{
             if(!room.memory.structures)
