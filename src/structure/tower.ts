@@ -21,7 +21,11 @@ export const tower_run = function(room: Room){
         }
         */
 
-        const closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        const closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {
+            filter: (creep) => {
+                return creep.owner.username != "LEILIN"
+            }
+        })
         if(!closestHostile)return
         
         for(let id in towers){

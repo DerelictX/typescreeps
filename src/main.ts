@@ -22,6 +22,10 @@ export const loop = function () {
         structure_updater
         body_generator
     }
+    if(!Memory.owned_rooms){
+        Memory.owned_rooms = []
+        return
+    }
     
     for(let room_name of Memory.owned_rooms){
         const room = Game.rooms[room_name];
@@ -45,14 +49,12 @@ export const loop = function () {
     }
 
     for(var name in Game.creeps) {
-        if(Game.cpu.getUsed() > 18)
+        if(Game.cpu.getUsed() > 18 && Game.cpu.bucket < 8000)
             break
         try{
             const creep = Game.creeps[name];
             if(creep.spawning)
                 continue
-            
-            const cpu = Game.cpu.getUsed()
             switch (creep.memory.class_memory.class) {
                 case 'specialist':
                     specialist_run(creep)
@@ -69,11 +71,6 @@ export const loop = function () {
                 default:
                     break;
             }
-            const cpv = Game.cpu.getUsed() - cpu
-            if(cpv > 1){
-                //console.log(creep.memory.class_memory.role + ':\t' + cpv);
-            }
-                
         }catch(error){
             console.log(name + ':' + error + '');
         }
@@ -98,7 +95,8 @@ export const loop = function () {
     try{
         death_detect()
         terminal_run()
-        //Game.cpu.generatePixel();
+        if(Game.shard.name == 'shard2')
+            Game.cpu.generatePixel();
     }catch(error){
         console.log(':' + error);
     }
