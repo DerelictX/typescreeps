@@ -22,7 +22,7 @@ const perform_obtain = function(creep:Creep) {
         return
     
     if(creep.room.name != creep.memory.resource_room){
-        creep.moveTo(new RoomPosition(25,25,creep.memory.resource_room))
+        creep.moveTo(new RoomPosition(25,25,creep.memory.resource_room),{reusePath:100})
         return
     }
     
@@ -81,7 +81,7 @@ const perform_consume = function(creep:Creep) {
         return
     
     if(creep.room.name != creep.memory.target_room){
-        creep.moveTo(new RoomPosition(25,25,creep.memory.target_room))
+        creep.moveTo(new RoomPosition(25,25,creep.memory.target_room),{reusePath:100})
         return
     }
     

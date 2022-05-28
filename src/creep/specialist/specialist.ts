@@ -108,7 +108,7 @@ const role_performers = {
                 creep.attackController(controller)
             else creep.reserveController(controller)
         } else {
-            creep.moveTo(Game.flags.claim,{reusePath:100})
+            creep.moveTo(Game.flags.claim,{reusePath:100,visualizePathStyle:{}})
         }
     }
 }

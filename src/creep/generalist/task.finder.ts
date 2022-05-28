@@ -39,7 +39,7 @@ const obtain: {[role in GeneralistRoleName]:ObtainPriority} = {
     builder:    ['withdraw_energy','harvest_autarky'],
     maintainer: ['withdraw_energy'],
     fortifier:  ['unstore_energy'],
-    pioneer:    ['loot_energy','withdraw_energy'],
+    pioneer:    ['loot_energy','withdraw_energy','harvest_autarky'],
 }
 
 type ConsumePriority = {[i:number]:keyof typeof consume_finders}
