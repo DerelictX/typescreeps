@@ -35,7 +35,7 @@ export const change_reaction = function(room:Room){
     for(let tier = 3; tier >= 0; tier--){
         const reacts = compound_tier[tier]
         for(let i in reacts){
-            if(tier < 3 && storage.store[reacts[i]] > 12000)
+            if(tier > 0 && tier < 3 && storage.store[reacts[i]] > 12000)
                 continue
             if(storage.store[reacts[i]] > 24000)
                 continue
@@ -61,7 +61,7 @@ const compound_tier:MineralCompoundConstant[][]  = [
         'ZHO2','GHO2','LHO2',
         'KHO2','UH2O',
         'LH2O','ZH2O','GH2O',
-        //'KH2O','UHO2'
+        'KH2O','UHO2'
     ],[
         'XZHO2','XGHO2','XLHO2',
         'XKHO2','XUH2O',

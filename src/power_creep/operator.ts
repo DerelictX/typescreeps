@@ -2,17 +2,16 @@ export const operator_run = function(operator:PowerCreep){
     
     if(!operator.room)
         return
-    
+
     /*
-    if(operator.room.name != 'E31S56'){
-        operator.moveTo(new RoomPosition(25,25,'E31S56'))
-        return
-    }
-    
     if(operator.room.controller && !operator.room.controller.isPowerEnabled){
         if(operator.enableRoom(operator.room.controller) == ERR_NOT_IN_RANGE){
             operator.moveTo(operator.room.controller)
         }
+        return
+    }
+    if(operator.room.name != 'E31S56'){
+        operator.moveTo(new RoomPosition(25,25,'E31S56'))
         return
     }
 
@@ -40,6 +39,19 @@ export const operator_run = function(operator:PowerCreep){
         }
     }
 
+    if(operator.powers[PWR_REGEN_SOURCE] && operator.powers[PWR_REGEN_SOURCE].cooldown == 0){
+        const sources = operator.room.find(FIND_SOURCES);
+        for(var i in sources){
+            const source = sources[i]
+            if(source && (!source.effects || !source.effects[0]) && source.ticksToRegeneration > 0){
+                if(operator.usePower(PWR_REGEN_SOURCE,source) == ERR_NOT_IN_RANGE)
+                    operator.moveTo(source)
+                return
+            }
+        }
+    }
+/*
+
     if(operator.powers[PWR_OPERATE_LAB] && operator.powers[PWR_OPERATE_LAB].cooldown == 0){
         if(operator.store['ops'] < 100)
             return
@@ -54,18 +66,6 @@ export const operator_run = function(operator:PowerCreep){
         }
     }
 
-    if(operator.powers[PWR_REGEN_SOURCE] && operator.powers[PWR_REGEN_SOURCE].cooldown == 0){
-        const sources = operator.room.find(FIND_SOURCES);
-        for(var i in sources){
-            const source = sources[i]
-            if(source && (!source.effects || !source.effects[0]) && source.ticksToRegeneration > 0){
-                if(operator.usePower(PWR_REGEN_SOURCE,source) == ERR_NOT_IN_RANGE)
-                    operator.moveTo(source)
-                return
-            }
-        }
-    }
-/*
     if(operator.powers[PWR_OPERATE_STORAGE] && operator.powers[PWR_OPERATE_STORAGE].cooldown == 0){
         if(operator.store['ops'] < 600)
             return

@@ -109,7 +109,11 @@ export const harvest_updater = {
     mineral: function(room: Room){
         room.memory.tasks.harvest_m = []
         const mineral: Mineral = room.find(FIND_MINERALS,{
-            filter: (mineral) => {return mineral.mineralAmount > 0}
+            filter: (mineral) => {
+                if(room.storage && room.storage.store[mineral.mineralType] < 100000)
+                    return mineral.mineralAmount > 0
+                return false
+            }
         })[0]
         if(!mineral) return
 
