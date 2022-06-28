@@ -3,13 +3,15 @@ import { change_reaction } from "@/structure/lab"
 import { structure_updater } from "./structure.updater"
 import { harvest_updater } from "./task.performer"
 
+//计时器到点后，判断到底要不要生这个爬，更新爬的配置
+//循环器顺便也用于扫描房间
 const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     harvester_m: function(room:Room){
         harvest_updater.mineral(room)
         const generator = body_generator.W2cM
         room.memory.spawn_loop['harvester_m'].body_parts = generator(
             room.energyAvailable,7)
-        if(room.memory.tasks.harvest_m[0])
+        if(room.memory.tasks.harvest_m[0])  //你挖个啥？
             return true
         return false
     },
@@ -21,7 +23,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         const generator = body_generator.W2cM
         let workload = 3
         if(room.controller && room.controller.level == 8)
-            workload = 5
+            workload = 5       //shard3生大点的爬，省cpu
         room.memory.spawn_loop['harvester_s0'].body_parts = generator(
             room.energyAvailable,workload)
         return true
@@ -41,7 +43,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     },
 
     maintainer: function(room:Room){
-        structure_updater.towers(room)
+        structure_updater.towers(room)  //顺便更新建筑缓存
         const generator = body_generator.WCM
         let workload = 4
         room.memory.spawn_loop['maintainer'].body_parts = generator(
@@ -49,8 +51,8 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         return true
     },
     supplier: function(room:Room){
-        structure_updater.labs(room)
-        change_reaction(room)
+        structure_updater.labs(room)  //顺便更新建筑缓存
+        change_reaction(room)         //更新lab任务
 
         let workload = room.controller?.level
         if(!workload) return false
@@ -59,7 +61,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         return true
     },
     collector: function(room:Room){
-        structure_updater.containers(room)
+        structure_updater.containers(room)  //顺便更新建筑缓存
         structure_updater.links(room)
 
         let workload = room.controller?.level
@@ -97,7 +99,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
         let workload = 16
         room.memory.spawn_loop['fortifier'].body_parts = generator(
             room.energyAvailable,workload)
-        if(room.storage && room.storage.store['energy'] > 270000)
+        if(room.storage && room.storage.store['energy'] > 270000)   //能量多了再刷墙
             return true
         return false
     },
@@ -110,7 +112,7 @@ const spawn_handler: {[r in AnyRoleName]:(room:Room) => boolean} = {
     reserver: function(room:Room){
         return false
         room.memory.spawn_loop['reserver'].succ_interval = 1100
-        if(room.name == 'E33S57') return true
+        if(room.name == 'E33S57') return true        //手动设置
         return false
     },
 }
@@ -123,12 +125,12 @@ export const spawn_loop = function(room: Room) {
         
         if(spawn_loop.succeed_time > Game.time)
             continue
-        room.memory.spawn_loop[role_name].succeed_time = Game.time + 1500
+        room.memory.spawn_loop[role_name].succeed_time = Game.time + 1500   //默认1500tick后再生下一个
         if(room.memory.spawn_loop[role_name].succ_interval < 300)
             room.memory.spawn_loop[role_name].succ_interval = 300
 
         if(spawn_handler[role_name](room))
-            room.memory.spawn_loop[role_name].queued = 1
+            room.memory.spawn_loop[role_name].queued = 1    //确定要生
             
         if(room.memory.spawn_loop[role_name].body_parts.length == 0){
             const generator = body_generator[default_body_config[role_name].generator]

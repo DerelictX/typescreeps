@@ -1,11 +1,11 @@
 type AnyClassMemory = CarrierMemory|FighterMemory|GeneralistMemory|SpecialistMemory
 
 interface CreepMemory {
-    class_memory:   AnyClassMemory
-    spawn_room:     string
-    resource_room:  string
-    target_room:    string
-    boost_queue:    {
+    class_memory:   AnyClassMemory  //职业专属内容
+    spawn_room:     string  //出生地
+    resource_room:  string  //获取资源房
+    target_room:    string  //消耗资源房
+    boost_queue:    {       //强化列表
         part:BodyPartConstant
         boost:MineralBoostConstant}[]
     
@@ -28,7 +28,7 @@ interface CarrierMemory {
     class:  'carrier'
     role:   CarrierRoleName
 
-    state:      TransportState
+    state:      TransportState  //取货还是送货
     collect:    TransportTask[]
     supply:     TransportTask[]
 }
@@ -37,7 +37,7 @@ interface CarrierMemory {
 
 type FighterRoleName = 'melee'|'ranged'|'healer'
 
-interface FighterMemory {
+interface FighterMemory {   //没写打架
     class:  'fighter'
     role:   FighterRoleName
 }
@@ -50,7 +50,7 @@ interface GeneralistMemory {
     class:  'generalist'
     role:   GeneralistRoleName
 
-    state:      GeneralistState
+    state:      GeneralistState //取能还是耗能
     obtain?:     ObtainTask
     consume?:    ConsumeTask
 }

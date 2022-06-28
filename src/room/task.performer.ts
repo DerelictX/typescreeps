@@ -1,3 +1,5 @@
+
+//检查房间内存完整性
 export const memory_inspector: {[k in keyof RoomMemory]:
     (room: Room) => void
 } = {
@@ -69,6 +71,7 @@ export const memory_inspector: {[k in keyof RoomMemory]:
     }
 }
 
+//生成静态任务
 export const harvest_updater = {
     source: function(room: Room){
         room.memory.tasks.harvest = []

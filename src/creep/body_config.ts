@@ -3,6 +3,9 @@ import _ from "lodash"
 type body_generator_name = "WCM" | "W2M" | "W2cM" | "C2M"
     | "ClM" | "TH2" | "TA3" | "TR3"
 
+//动态组件生成器
+//energy_cost:能量上限，最基本的组合重复的次数
+//W2cM(114514,3) = [WORK*2 + MOVE]*3 + CARRY = [WORK*6 + CARRY + MOVE*3]
 export const body_generator:{[c in body_generator_name]:
     (energy_cost:number,workload:number)=>BodyPartConstant[]
 } = {
@@ -84,6 +87,7 @@ export const body_generator:{[c in body_generator_name]:
 }
 _.assign(global, {body_generator:body_generator})
 
+//每个角色默认的身体配置
 export const default_body_config: {[R in AnyRoleName]:
     {generator:body_generator_name ,workload:number}
 } = {

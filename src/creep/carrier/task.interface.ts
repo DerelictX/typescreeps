@@ -1,8 +1,8 @@
 
 interface TransportTask{
-    source:         Id<AnyStoreStructure|Tombstone|Ruin>
-    target:         Id<AnyCreep|AnyStoreStructure>
-    resourceType:   ResourceConstant
+    source:         Id<AnyStoreStructure|Tombstone|Ruin>    //从哪里来
+    target:         Id<AnyCreep|AnyStoreStructure>          //到哪里去
+    resourceType:   ResourceConstant    //让我康康里面装的啥
     amount:         number
 }
 

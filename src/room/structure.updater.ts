@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export const structure_updater = {
-
+    //建筑缓存更新器
     all: function(room:Room) {
         this.containers(room)
         this.towers(room)
@@ -122,7 +122,7 @@ export const structure_updater = {
             }).length;
         }
     
-        for(let i in labs){
+        for(let i in labs){     //靠近中间的lab作为输入
             if(labs.length >= 6 && near_num[i] == labs.length && room.memory.structures.labs_in.length < 2)
                 room.memory.structures.labs_in.push(labs[i].id)
             else room.memory.structures.labs_out.push(labs[i].id)

@@ -5,6 +5,7 @@ export const fighter_run = function(creep:Creep) {
     role_performers[creep.memory.class_memory.role](creep)
 }
 
+//没写打架，不用看哩
 const squad_runner = function(squad: Creep[]){
     const melee = squad[0]
     const healer = squad[1]

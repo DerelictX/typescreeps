@@ -1,4 +1,4 @@
-
+//接任务：获取能量的任务
 export const find_obtain = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'generalist')
         return
@@ -6,16 +6,18 @@ export const find_obtain = function(creep:Creep) {
     var priority: ObtainPriority
     var duty: ObtainTask|null
 
+    //根据每个角色的任务优先级，找各个种类的任务
     priority = obtain[role]
     for(let i in priority){
         duty = obtain_finders[priority[i]](creep)
         if(duty){
             //creep.say(':'+ priority[i])
+            //找到任务就返回
             return duty
         }
     }
 }
-
+//接任务：消耗能量的任务
 export const find_consume = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'generalist')
         return
@@ -23,42 +25,46 @@ export const find_consume = function(creep:Creep) {
     var priority: ConsumePriority
     var duty: ConsumeTask|null
 
+    //根据每个角色的任务优先级，找各个种类的任务
     priority = consume[role]
     for(let i in priority){
         duty = consume_finders[priority[i]](creep)
         if(duty){
             //creep.say(':'+ priority[i])
+            //找到任务就返回
             return duty
         }
     }
 }
 
+//取能任务优先级
 type ObtainPriority = {[i:number]:keyof typeof obtain_finders}
-const obtain: {[role in GeneralistRoleName]:ObtainPriority} = {
-
-    builder:    ['withdraw_energy','harvest_autarky'],
+const obtain: {[role in GeneralistRoleName]:ObtainPriority} = { //autarky:自助
+    builder:    ['withdraw_energy','harvest_autarky'],  //先从container和storage取，没有自己去挖
     maintainer: ['withdraw_energy'],
-    fortifier:  ['unstore_energy'],
-    pioneer:    ['loot_energy','withdraw_energy','harvest_autarky'],
+    fortifier:  ['unstore_energy'],                     //只从storage取
+    pioneer:    ['loot_energy','withdraw_energy','harvest_autarky'],    //优先从遗迹拿
+        //loot:掠夺
 }
 
+//耗能任务优先级
 type ConsumePriority = {[i:number]:keyof typeof consume_finders}
 const consume: {[role in GeneralistRoleName]:ConsumePriority} = {
-
-    builder: [
+    //repair_damaged：先修被锤的建筑
+    builder: [      //build:    造建筑，业余修墙升级
         'repair_damaged','build',
         'fortify','upgrade_autarky','over_fortify'
     ],
-    maintainer: [
+    maintainer: [   //填ext,    修路,   维持墙的血量不下降,   没事去升级
         'repair_damaged','fill_extensions','repair_decayed',
         'fortify','upgrade_autarky','over_fortify'
     ],
     fortifier:  [
         'repair_damaged','build',
-        'fortify','over_fortify'
+        'fortify','over_fortify'    //增加墙的血量
     ],
     pioneer: [
-        'fill_extensions','repair_damaged','build',
+        'fill_extensions','repair_damaged','build',     //开新房时，填ext，造建筑
         'upgrade_autarky','fortify','over_fortify'
     ]
 }
@@ -66,6 +72,7 @@ const consume: {[role in GeneralistRoleName]:ConsumePriority} = {
 
 
 const obtain_finders = {
+    //从container和storage取能
     withdraw_energy: function(creep: Creep): WithdrawEnergyTask|null{
         let target: AnyStoreStructure|null = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -82,6 +89,7 @@ const obtain_finders = {
         return null
     },
 
+    //没有专门harvester的时候,自己去挖source
     harvest_autarky: function(creep: Creep): HarvestTask|null{
         let target = creep.pos.findClosestByRange(FIND_SOURCES, {
             filter: (source) => {
@@ -94,6 +102,7 @@ const obtain_finders = {
         return null
     },
 
+    //只从有一定能量储备的storage取，避免能量见底
     unstore_energy: function(creep: Creep): WithdrawEnergyTask|null{
         let target:StructureStorage|StructureTerminal|undefined = creep.room.storage
         if(target && target.store['energy'] > 200000){
@@ -106,6 +115,7 @@ const obtain_finders = {
         return null
     },
 
+    //从遗迹取能量
     loot_energy: function(creep: Creep): WithdrawEnergyTask|null{
         let target: AnyOwnedStructure&AnyStoreStructure|null = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, {
             filter: (structure) => {
@@ -127,6 +137,7 @@ const obtain_finders = {
 }
 
 const consume_finders = {
+    //升级，能量自己想办法，不和专门的upgrader抢link的能量
     upgrade_autarky: function(creep: Creep): UpgradeTask|null{
         let target = creep.room.controller;
         if(target && (target.level<=7 || target.ticksToDowngrade<=190000))
@@ -134,6 +145,7 @@ const consume_finders = {
         return null
     },
     
+    //填ext
     fill_extensions :function(creep:Creep): TransferEnergyTask|null {
         if(creep.room.energyAvailable == creep.room.energyCapacityAvailable)
             return null
@@ -152,6 +164,7 @@ const consume_finders = {
         return null
     },
 
+    //。。。。
     build: function(creep:Creep): BuildTask|null{
         let target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES)
         if(target)
@@ -159,6 +172,7 @@ const consume_finders = {
         return null
     },
 
+    //被锤的建筑
     repair_damaged: function(creep: Creep): RepairTask|null{
         let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -176,6 +190,7 @@ const consume_finders = {
         return null
     },
 
+    //老化的路和container
     repair_decayed: function(creep:Creep): RepairTask|null{
         let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -191,6 +206,7 @@ const consume_finders = {
         return null
     },
 
+    //维持墙的血量在room.memory.structures.wall_hits左右
     fortify: function(creep:Creep): RepairTask|null{
         var wallHits = creep.room.memory.structures.wall_hits - 1000
         if(wallHits >= 100000)
@@ -200,7 +216,7 @@ const consume_finders = {
             filter: (structure) => {
                 if(structure.structureType == STRUCTURE_RAMPART
                     || structure.structureType == STRUCTURE_WALL)
-                    return structure.hits < wallHits
+                    return structure.hits < wallHits        //只修血量小于阈值的墙
                 return false
             }
         })
@@ -209,8 +225,9 @@ const consume_finders = {
         return null
     },
 
+    //刷墙，优先级低于fortify，进入该函数说明没有低于阈值的墙了，要增加阈值
     over_fortify: function(creep:Creep): RepairTask|null{
-        var wallHits = creep.room.memory.structures.wall_hits + 30000
+        var wallHits = creep.room.memory.structures.wall_hits + 30000   //增加阈值
         if(wallHits <= 100000000)
             creep.room.memory.structures.wall_hits = wallHits
 

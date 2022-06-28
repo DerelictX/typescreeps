@@ -1,7 +1,7 @@
 
 export const death_detect = function(){
     //enqueue
-    for(let creep_name in Memory.creeps) {
+    for(let creep_name in Memory.creeps) {  //死去的爬爬灵魂消散哩
         if(!Game.creeps[creep_name]) {
             try{
                 delete Memory.creeps[creep_name];
@@ -15,7 +15,7 @@ export const death_detect = function(){
 
     
     //visual
-    for(var spawn_name in Game.spawns){
+    for(var spawn_name in Game.spawns){     //猜猜我是谁
         var spawn = Game.spawns[spawn_name];
         
         if(spawn && spawn.spawning) {

@@ -1,4 +1,4 @@
-
+//跟energy有关的任务
 type WorkAction = 
     ACTION_HARVEST|ACTION_UPGRADE
     |ACTION_BUILD|ACTION_REPAIR
@@ -11,13 +11,15 @@ type ACTION_REPAIR = "repair"
 type ACTION_WITHDRAW = "withdraw"
 type ACTION_TRANSFER = "transfer"
 
-type ObtainTask =
+type ObtainTask =   //取能
     HarvestTask | WithdrawEnergyTask
 
-type ConsumeTask = 
+type ConsumeTask =  //耗能
     UpgradeTask | TransferEnergyTask
     | BuildTask | RepairTask
 
+
+//一下是任务在内存中的描述
 interface HarvestTask{
     action: ACTION_HARVEST
     target: Id<Source|Mineral|Deposit>

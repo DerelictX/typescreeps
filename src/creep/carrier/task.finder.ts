@@ -1,3 +1,4 @@
+//获取物流任务
 export const find_transport = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'carrier')
         return
@@ -7,15 +8,17 @@ export const find_transport = function(creep:Creep) {
 
     priority = transport[role]
     for(let i in priority){
+        //按任务优先级找任务
         duty = transport_finders[priority[i]](creep)
         if(duty){
             //creep.say(':'+ priority[i])
             creep.memory.class_memory.collect[0] = duty
-            return
+            return  //找到任务返回
         }
     }
 }
 
+//把爬身上的东西送回storage
 export const find_store = function(creep:Creep) {
     if(creep.memory.class_memory.class != 'carrier')
         return
@@ -30,8 +33,8 @@ export const find_store = function(creep:Creep) {
     
     var store: StorePropertiesOnly = creep.store
     var resourceType: keyof typeof store
-    for(resourceType in store){
-        creep.memory.class_memory.supply.push({
+    for(resourceType in store){     //遍历creep.storage
+        creep.memory.class_memory.supply.push({     //生成任务，压栈
             source:         storage.id,
             target:         storage.id,
             resourceType:   resourceType,
@@ -40,6 +43,7 @@ export const find_store = function(creep:Creep) {
     }
 }
 
+//优先级
 type TransportPriority = {[i:number]:keyof typeof transport_finders}
 const transport: {[role in CarrierRoleName]:TransportPriority} = {
     collector:  ['containers','sweep','compound','loot','terminal','supply_upgrade'],
@@ -48,12 +52,13 @@ const transport: {[role in CarrierRoleName]:TransportPriority} = {
 }
 
 const transport_finders = {
+    //供应升级爬
     supply_upgrade: function(creep:Creep):TransportTask|null {
         const storage = Game.getObjectById(creep.room.memory.structures.containers_out[0])
-        if(!storage || storage.store.getFreeCapacity() < 800)
+        if(!storage || storage.store.getFreeCapacity() < 800)       //控制器旁边的container
             return null
 
-        const containers = creep.room.memory.structures.containers_in
+        const containers = creep.room.memory.structures.containers_in   //矿旁边的container
                 .map(id => Game.getObjectById(id))
                 .filter(c => c && c.store.getUsedCapacity() >= 1200)
 
@@ -64,7 +69,7 @@ const transport_finders = {
             for(resourceType in store){
                 return {
                     source:         container.id,
-                    target:         storage.id,
+                    target:         storage.id,     //变量名误导了，是从矿边送到控制器边
                     resourceType:   resourceType,
                     amount:         Math.min(
                         creep.store.getFreeCapacity(),
@@ -76,6 +81,7 @@ const transport_finders = {
         return null
     },
     
+    //取挖到的矿，入库
     containers: function(creep:Creep):TransportTask|null {
         var storage:(AnyStoreStructure&AnyOwnedStructure)|undefined
         storage = creep.room.storage
@@ -84,6 +90,7 @@ const transport_finders = {
         if(storage.store['energy'] > storage.store.getCapacity() * 0.4)
             return null
 
+        //中央link
         const link_nexus = Game.getObjectById(creep.room.memory.structures.link_nexus[0])
         if(link_nexus && link_nexus.store['energy'] >= 300){
             return {
@@ -95,7 +102,7 @@ const transport_finders = {
                     link_nexus.store['energy'])
             }
         }
-
+        //矿边的container
         const containers = creep.room.memory.structures.containers_in
                 .map(id => Game.getObjectById(id))
                 .filter(c => c && c.store.getUsedCapacity() >= 1200)
@@ -119,6 +126,7 @@ const transport_finders = {
         return null
     },
 
+    //回收遗产
     loot: function(creep:Creep):TransportTask|null {
         if(creep.ticksToLive && creep.ticksToLive < 50)
             return null
@@ -130,6 +138,7 @@ const transport_finders = {
         if(!storage || !storage.my || storage.store.getFreeCapacity() < 100000)
             return null
 
+        //目标敌法建筑
         const hostile_stores:(AnyStoreStructure&AnyOwnedStructure)[] = creep.room.find(FIND_HOSTILE_STRUCTURES, {
             filter: (structure) => {
                 if(structure.structureType == STRUCTURE_STORAGE
@@ -141,7 +150,7 @@ const transport_finders = {
         for(let i in hostile_stores){
             const hostile_store = hostile_stores[i]
             var store: StorePropertiesOnly = hostile_store.store
-            var resourceType: keyof typeof store
+            var resourceType: keyof typeof store    //遍历store,通通搬回家
             for(resourceType in store){
                 return {
                     source:         hostile_store.id,
@@ -155,6 +164,7 @@ const transport_finders = {
         return null
     },
 
+    //扫地，墓碑和废墟
     sweep: function(creep:Creep):TransportTask|null {
         var storage:(AnyStoreStructure&AnyOwnedStructure)|undefined
         storage = creep.room.storage
@@ -167,7 +177,7 @@ const transport_finders = {
             filter: (tombstone) => {
                 return tombstone.store.getUsedCapacity() >= 200
             }
-        })
+        })  //舔包
         for(let i in tombstones){
             const tombstone = tombstones[i]
             var store: StorePropertiesOnly = tombstone.store
@@ -188,7 +198,7 @@ const transport_finders = {
             filter: (ruin) => {
                 return ruin.store.getUsedCapacity() > 0
             }
-        })
+        })  //废墟
         for(let i in ruins){
             const ruin = ruins[i]
             var store: StorePropertiesOnly = ruin.store
@@ -208,6 +218,7 @@ const transport_finders = {
         return null
     },
 
+    //填ext和spawn
     extensions: function(creep:Creep):TransportTask|null {
         if(creep.room.energyAvailable == creep.room.energyCapacityAvailable)
             return null
@@ -245,6 +256,7 @@ const transport_finders = {
         return null
     },
 
+    //给塔充能
     towers: function(creep:Creep):TransportTask|null {
         const source:(AnyStoreStructure&AnyOwnedStructure|null) = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -278,6 +290,7 @@ const transport_finders = {
         return null
     },
 
+    //烧power
     power_spawn: function(creep:Creep):TransportTask|null {
         
         if(!creep.room.memory.structures.power_spawn)
@@ -397,6 +410,7 @@ const transport_finders = {
         return null
     },
 
+    //反应物
     reactant: function(creep:Creep):TransportTask|null {
         if(creep.ticksToLive && creep.ticksToLive < 50)
             return null
@@ -407,7 +421,7 @@ const transport_finders = {
             const reactantType = reaction[i];
             const lab_in = Game.getObjectById(creep.room.memory.structures.labs_in[i]);
             if(!lab_in)continue
-            
+            //先清理之前反应残留的其它反应物
             if(lab_in.mineralType && reactantType != lab_in.mineralType){
                 let storage:(AnyStoreStructure&AnyOwnedStructure)|undefined
                 storage = creep.room.storage
@@ -465,6 +479,7 @@ const transport_finders = {
         return null
     },
 
+    //收集反应产物
     compound: function(creep:Creep):TransportTask|null {
         if(creep.ticksToLive && creep.ticksToLive < 50)
             return null
@@ -476,10 +491,10 @@ const transport_finders = {
         for(let i in creep.room.memory.structures.labs_out){
             const boostType:MineralBoostConstant|undefined = creep.room.memory.boost[i]
             const lab_out = Game.getObjectById(creep.room.memory.structures.labs_out[i])
-            if(!lab_out || boostType)continue
+            if(!lab_out || boostType)continue   //被boost占用，不管
 
-            if(lab_out.mineralType && (compoundType != lab_out.mineralType
-                    || lab_out.store[compoundType] >= creep.store.getFreeCapacity())){
+            if(lab_out.mineralType && (compoundType != lab_out.mineralType  //化合物类型不对，堵住lab，回收
+                    || lab_out.store[compoundType] >= creep.store.getFreeCapacity())){  //回收化合物
                 let storage:(AnyStoreStructure&AnyOwnedStructure)|undefined
                 storage = creep.room.storage
                 if(!storage || !storage.my || storage.store.getFreeCapacity() < 50000)
@@ -500,6 +515,7 @@ const transport_finders = {
         return null
     },
 
+    //storage和terminal
     terminal: function(creep:Creep):TransportTask|null {
         if(creep.ticksToLive && creep.ticksToLive < 50)
             return null
